@@ -3,6 +3,13 @@ import socket
 import datetime
 import json
 
+def active_connection():
+	try:
+		socket.create_connection(("www.google.com", 80), 2)
+		return True
+	except OSError:
+		return False
+
 def run_test():
 	st = speedtest.Speedtest()
 	st.get_best_server()
@@ -22,21 +29,22 @@ def s_to_f(data, filename='data.json'):
 		json.dump(data, file, indent=4)
 
 def main():
-	results = run_test()
-	hostname, local_ip, public_ip = sys_info()
-	current_time = datetime.datetime.now().isoformat()
-	
-	data = {
-		"TIME": current_time,
-		"ISP": results.get('client').get('isp'),
-		"IP": results.get('client').get('ip'),
-		"LOCAL_IP": local_ip,
-		"HOSTNAME": hostname,
-		"UPLOAD_SPEED": round(results.get('upload') / 1_000_000, 4),
-		"DOWNLOAD_SPEED": round(results.get('download') / 1_000_000, 4),
-		"LATENCY": results.get('ping')
-	}
-	
-	s_to_f(data)
+	if active_connection():
+		results = run_test()
+		hostname, local_ip, public_ip = sys_info()
+		current_time = datetime.datetime.now().isoformat()
+		data = {
+			"TIME": current_time,
+			"ISP": results.get('client').get('isp'),
+			"IP": results.get('client').get('ip'),
+			"LOCAL_IP": local_ip,
+			"HOSTNAME": hostname,
+			"UPLOAD_SPEED": round(results.get('upload') / 1_000_000, 4),
+			"DOWNLOAD_SPEED": round(results.get('download') / 1_000_000, 4),
+			"LATENCY": results.get('ping')
+		}
+		s_to_f(data)
+	else:
+		print(f"\033[91mInternet connection failed.\033[0m")
 
 main()
