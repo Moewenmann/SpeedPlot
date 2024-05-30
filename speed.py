@@ -3,6 +3,9 @@ import socket
 import datetime
 import json
 import os
+import sys
+import time
+import threading
 
 def active_connection():
 	try:
@@ -38,7 +41,18 @@ def s_to_f(data, filename='data.json'):
 	with open(filename, 'w') as file:
 		json.dump(existing_data, file, indent=4)
 
+def spinner(stop_event):
+	while not stop_event.is_set():
+		for char in '|/-\\':
+			sys.stdout.write('\r' + char)
+			sys.stdout.flush()
+			time.sleep(0.1)
+
 def main():
+	stop_event = threading.Event()
+	spinner_thread = threading.Thread(target=spinner, args=(stop_event,))
+	spinner_thread.start()
+	start_time = time.time()
 	if active_connection():
 		results = run_test()
 		hostname, local_ip, public_ip = sys_info()
@@ -54,7 +68,18 @@ def main():
 			"LATENCY": results.get('ping')
 		}
 		s_to_f(data)
+		stop_event.set()
+		spinner_thread.join()
+	elif time.time() - start_time > 30:
+		stop_event.set()
+		spinner_thread.join()
+		print(f"\033[91mTest failed!\033[0m")
 	else:
+		stop_event.set()
+		spinner_thread.join()
 		print(f"\033[91mInternet connection failed.\033[0m")
+	stop_event.set()
+	spinner_thread.join()
 
-main()
+if __name__ == "__main__":
+	main()
