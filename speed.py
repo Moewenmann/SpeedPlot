@@ -2,6 +2,7 @@ import speedtest
 import socket
 import datetime
 import json
+import os
 
 def active_connection():
 	try:
@@ -25,8 +26,17 @@ def sys_info():
 	return hostname, local_ip, public_ip
 
 def s_to_f(data, filename='data.json'):
-	with open(filename, 'a') as file:
-		json.dump(data, file, indent=4)
+	if os.path.exists(filename):
+		with open(filename, 'r') as file:
+			try:
+				existing_data = json.load(file)
+			except json.JSONDecodeError:
+				existing_data = []
+	else:
+		existing_data = []
+	existing_data.append(data)
+	with open(filename, 'w') as file:
+		json.dump(existing_data, file, indent=4)
 
 def main():
 	if active_connection():
