@@ -44,9 +44,9 @@ def create_plot(data, stats, hostname, start_time, end_time):
 
 	plt.figure(figsize=(10, 6))
 
-	plt.plot(timestamps, download_speeds, label='Download in Mbps')
-	plt.plot(timestamps, upload_speeds, label='Upload in Mbps')
-	plt.plot(timestamps, latencies, label='Latency in ms')
+	plt.plot(timestamps, download_speeds, label='Download in Mbps', marker='o', markersize=3)
+	plt.plot(timestamps, upload_speeds, label='Upload in Mbps', marker='o', markersize=3)
+	plt.plot(timestamps, latencies, label='Latency in ms', marker='o', markersize=3)
 
 	plt.title(f'Server: {hostname} - {start_time} to {end_time}')
 	plt.xlabel('Time')

@@ -80,6 +80,9 @@ def main():
 		print(f"\033[91mInternet connection failed.\033[0m")
 	stop_event.set()
 	spinner_thread.join()
+	end_time = time.time()
+	elapsed_time = end_time - start_time
+	print(f"Elapsed time: {elapsed_time:.2f} seconds")
 
 if __name__ == "__main__":
 	main()
