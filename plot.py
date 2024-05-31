@@ -52,6 +52,14 @@ def create_plot(data, stats, hostname, start_time, end_time):
 	plt.xlabel('Time')
 	plt.ylabel('Speed / Latency')
 	plt.legend()
+	plt.subplots_adjust(bottom=0.2)
+	stats_text = (f"Download: Avg={stats['download_avg']:.2f} Mbps, "
+				  f"Min={stats['download_min']:.2f} Mbps, Max={stats['download_max']:.2f} Mbps\n"
+				  f"Upload: Avg={stats['upload_avg']:.2f} Mbps, "
+				  f"Min={stats['upload_min']:.2f} Mbps, Max={stats['upload_max']:.2f} Mbps\n"
+				  f"Latency: Avg={stats['latency_avg']:.2f} ms, "
+				  f"Min={stats['latency_min']:.2f} ms, Max={stats['latency_max']:.2f} ms")
+	plt.gcf().text(0.02, 0.02, stats_text, fontsize=10)
 
 	plt.savefig('plot.png')
 	plt.show()
